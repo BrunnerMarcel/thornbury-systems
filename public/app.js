@@ -191,11 +191,14 @@ async function showInvoice(id) {
       </tr>`),
       html`
         <tr><td colspan="4">Net</td>${money(invoice.net)}</tr>
+        <tr><td colspan="4">Of which vatable</td>${money(invoice.vatable)}</tr>
         <tr><td colspan="4">VAT</td>${money(invoice.vat)}</tr>
         <tr><td colspan="4">Total</td><td class="num">${invoice.display}</td></tr>
       `,
     )}
-    <p class="note">Only SERVICE lines carry VAT. Metered supply is zero rated.</p>
+    <p class="note">Engineer work is standard rated. Metered supply is zero rated to a
+      domestic account and standard rated to a commercial one. The rule is in
+      <span class="mono">src/invoices/calc.ts</span> and is not signed off yet.</p>
   `;
 }
 
@@ -266,12 +269,16 @@ async function showSlots() {
     <p class="subtitle">What the customer is told. UK local time.</p>
     ${table(
       [{ label: 'Order' }, { label: 'Date' }, { label: 'Window' }],
+      // A window that runs past midnight has two dates and the API returns both.
+      // Showing only one of them is what put W-4412 in the queue three times.
       slots.map((slot) => html`<tr>
         <td class="mono">${slot.workOrderId}</td>
-        <td class="mono">${slot.date}</td>
+        <td class="mono">${slot.date}${slot.endDate === slot.date ? '' : html` &rarr; ${slot.endDate}`}</td>
         <td>${slot.window}</td>
       </tr>`),
     )}
+    <p class="note">An out of hours window crosses midnight, so it is dated at both
+      ends. The window opens on the first date.</p>
   `;
 }
 

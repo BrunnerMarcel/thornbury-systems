@@ -5,19 +5,26 @@ description: Work a support queue item from jobs/ end to end — read the ticket
 
 # Working a support queue job
 
-The tickets in `jobs/` were written by whoever took the call. They describe a
-symptom a customer saw, second hand, often months ago. They are evidence, not a
-specification, and three of the four have been wrong about the cause.
+Tickets arrive as one Markdown file each in `jobs/`, written by whoever took the
+call. They describe a symptom a customer saw, second hand, often months ago.
+They are evidence, not a specification.
+
+The four tickets cleared in September 2026 are the evidence for what follows:
+three of them named the wrong cause, and the fourth turned out not to be a bug
+at all. The examples below are from those, and are worth knowing even though the
+files are gone — `git log` has them.
 
 ## 1. Read the ticket for what it does not say
 
 Note explicitly what is missing before touching code:
 
-- **An unrecorded conversation.** JOB-A: "she mentioned something about not all
-  of it being vatable but I did not write down what she said." That is a
-  business decision nobody has made. It cannot be inferred from the codebase.
-- **A closed duplicate.** JOB-D points at W-4412, closed twice as cannot
-  reproduce. A ticket that keeps coming back was misdiagnosed, not imagined.
+- **An unrecorded conversation.** The VAT ticket said "she mentioned something
+  about not all of it being vatable but I did not write down what she said."
+  That is a business decision nobody has made. It cannot be inferred from the
+  codebase, and it is still unsigned off today.
+- **A closed duplicate.** The wrong-date ticket pointed at an older one that had
+  been closed twice as cannot reproduce. A ticket that keeps coming back was
+  misdiagnosed, not imagined.
 - **A condition in the reporter's aside.** "Both reports came in the summer",
   "it has never once failed on the build box", "the addresses are typed in by
   whoever takes the call". These are the reproduction steps. Treat an offhand

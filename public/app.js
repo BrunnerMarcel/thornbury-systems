@@ -275,7 +275,8 @@ async function showSlots() {
     ${table(
       [{ label: 'Order' }, { label: 'Date' }, { label: 'Window' }],
       // A window that runs past midnight has two dates and the API returns both.
-      // Showing only one of them is what put W-4412 in the queue three times.
+      // Showing only one of them is what put the wrong-date ticket in the queue
+      // three times: the date said one day, the window opened on the one before.
       slots.map((slot) => html`<tr>
         <td class="mono">${slot.workOrderId}</td>
         <td class="mono">${slot.date}${slot.endDate === slot.date ? '' : html` &rarr; ${slot.endDate}`}</td>

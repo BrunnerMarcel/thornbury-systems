@@ -28,9 +28,10 @@ arithmetic in the money path at all: the desktop product stored pounds as floats
 and the import path still produces `0.1 + 0.2` tickets.
 
 **Dates are stored UTC and shown UK local.** There is a third clock — the host's
-own zone — and it is what made W-4412 look unreproducible for two years. The
-build box is UTC, so it silently answers calendar questions correctly by
-accident; a dev machine here does not, and neither does a customer in Bristol.
+own zone — and it is what kept a wrong-appointment-date bug looking
+unreproducible for two years. The build box is UTC, so it silently answers
+calendar questions correctly by accident; a dev machine here does not, and
+neither does a customer in Bristol.
 `Date#getDay`, `Date#getDate` and `Date#toISOString` all answer in the wrong
 zone. Never use them for calendar work. Ask `src/shared/dates.ts` instead: it
 asks `Europe/London` explicitly, and everything date-shaped belongs there.
@@ -50,7 +51,10 @@ exactly how Trelawney were given the wrong night.
 - `src/server.ts` the routes. `src/static.ts` serves the UI under `/app`.
 - `public/` the browser front end. No framework, no build step, same origin.
 - `test/` one file per area. `node:test` and `node:assert/strict`.
-- `jobs/` the support queue.
+- `jobs/` the support queue, one Markdown file per ticket. Absent when nothing
+  is outstanding, which is the state to leave it in: a resolved ticket is
+  deleted, and the reasoning goes in a comment at the fix.
+- `docs/` plans and decisions that outlive a ticket.
 
 Imports carry the `.ts` extension because Node needs it at runtime. That is what
 `allowImportingTsExtensions` in `tsconfig.json` is for.
@@ -83,8 +87,12 @@ to the API, check whether a caption in `public/app.js` now describes it wrongly.
 
 ## Working here
 
-Support queue items live in `jobs/`. There is a `/support-job` skill that walks
-one end to end.
+Support queue items arrive as Markdown files in `jobs/`. There is a
+`/support-job` skill that walks one end to end; read it before picking one up,
+because the tickets have a habit of naming the wrong cause.
+
+[docs/ui-plan.md](docs/ui-plan.md) is the ranked list of what the front end
+should do next, and why, including what it cannot fix on its own.
 
 Branch rather than committing to `main`; more than one person is often in this
 tree at once. Commit messages are English, matching the history.

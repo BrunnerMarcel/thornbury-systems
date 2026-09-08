@@ -107,11 +107,15 @@ async function showCustomer(id) {
       <dl class="facts">
         <dt>Account</dt><dd class="mono">${customer.id}</dd>
         <dt>Type</dt><dd>${customer.accountType}</dd>
-        <dt>VAT registered</dt><dd>${customer.vatRegistered ? 'Yes' : 'No'}</dd>
         <dt>Outstanding</dt>
         <dd class="${customer.outstanding === format(0) ? 'settled' : 'owed'}">${customer.outstanding}</dd>
       </dl>
       <p class="note"><a href="#/customers/${customer.id}/statement">View statement</a></p>
+      <!-- Kept away from Outstanding on purpose. Sitting next to it, this read as
+           though it were what drives the VAT, and it is not. -->
+      <p class="note">VAT registered: ${customer.vatRegistered ? 'Yes' : 'No'}. This governs
+        what the customer can reclaim, not what we charge them &mdash; the VAT on their
+        invoices follows the account type.</p>
     </div>
 
     <h3>Invoices</h3>
@@ -256,8 +260,9 @@ async function showDispatch() {
         <td class="mono">${order.requestedAt}</td>
       </tr>`),
     )}
-    <p class="note">The dispatcher plans one visit per address per day, so a second
-      order at an address it has already booked is left here rather than assigned.</p>
+    <p class="note">An order is left here for one of two reasons: the address is
+      already being visited that day, or no engineer with the right skill is free for
+      the slot. The plan does not say which, so check both before assuming a duplicate.</p>
   `;
 }
 

@@ -26,7 +26,7 @@ in for SQL Server. Anything that only works at four rows is not finished.
 
 ---
 
-## 1. Print the statement properly
+## 1. Print the statement properly — done
 
 **Why first.** The statement was asked for by Trelawney's finance team, who were
 reconciling four invoice PDFs by hand every quarter. The statement view answers
@@ -34,17 +34,34 @@ that, and it currently prints with the site navigation across the top. The job
 is not actually finished until the thing they asked for can be put in front of
 their accounts department.
 
-- `@media print`: drop the nav, crumb and page chrome
-- the customer address block laid out as a statement header, with an issue date
-- repeat table headers across pages, avoid breaking a row
-- black on white, rules instead of fills, VAT and totals unambiguous
-- check it in the browser's own print preview at A4
+Shipped as a stylesheet, no new dependency. Save-as-PDF is the browser's job.
+There is a "Print this statement" button, and `@media print` gives an A4 page
+with a masthead, the customer as addressee, repeating column headings, totals
+that appear once at the end, and no navigation.
 
-No new dependency: this is a stylesheet. Save-as-PDF is the browser's job.
+Two things that were not obvious until it was on paper:
 
-**Open question for Finance:** a statement customers see probably needs a
-statement date and a period, and possibly a payment reference. Nobody has said.
-Same conversation as the VAT sign-off — see below.
+- The on-screen scroll box that keeps wide tables inside the viewport **clips
+  the table at the paper's edge** when printed. `overflow: visible` in print.
+- Hiding headings and captions globally made every *other* page print worse —
+  an untitled table. The statement hides its own heading by marking it
+  `screen-only`, because the print masthead already carries the title. Only
+  navigation and controls are hidden for everyone.
+
+Paid and outstanding are distinguished by weight, not colour, so the meaning
+survives a black and white printer.
+
+**Still open, and it needs Finance, not code.** The printed statement carries a
+"Prepared <date>" line, which is true and generated at render. It does not
+carry:
+
+- a statement period — the API has no notion of one
+- a payment reference or remittance details
+- the issuer's own address and VAT registration number, which are not anywhere
+  in this system and were deliberately not invented
+
+A real supplier statement almost certainly needs all three. Same conversation as
+the VAT sign-off.
 
 ## 2. Make it work past four rows
 

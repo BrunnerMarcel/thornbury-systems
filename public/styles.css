@@ -243,3 +243,179 @@ dl.facts dd {
   color: var(--muted);
   font-size: 13px;
 }
+
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Only rendered on paper. See the print rules at the end of this file. */
+.print-only {
+  display: none;
+}
+
+/* ---------- print ---------- */
+
+/* A statement goes to a customer's accounts department, so it has to survive
+   being printed or saved as a PDF. Everything that is navigation on screen is
+   noise on paper, and the scroll box that keeps wide tables inside the page
+   would clip the table at the paper's edge. */
+
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 10.5pt;
+  }
+
+  /* Navigation and controls only. Captions and headings are content, and a
+     printed work-order list with its heading stripped off is worse, not
+     tidier: the statement hides its own heading by marking it screen-only,
+     because the print masthead already carries the title. */
+  header,
+  .crumb,
+  .screen-only {
+    display: none !important;
+  }
+
+  main {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .statement-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20pt;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8pt;
+    margin-bottom: 14pt;
+  }
+
+  .statement-head p,
+  .statement-to p {
+    margin: 0;
+  }
+
+  .issuer {
+    font-size: 14pt;
+    font-weight: 700;
+  }
+
+  .issuer-sub,
+  .to-label {
+    color: #333;
+  }
+
+  .statement-meta {
+    text-align: right;
+  }
+
+  .doc-title {
+    font-size: 14pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .statement-to {
+    margin-bottom: 16pt;
+  }
+
+  .to-label {
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .to-name {
+    font-weight: 700;
+  }
+
+  /* The on-screen scroll container clips at the page edge when printed. */
+  .scroll {
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    background: none;
+  }
+
+  table {
+    min-width: 0;
+  }
+
+  /* Column headings repeat on every page; the totals appear once, at the end. */
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-row-group;
+    break-inside: avoid;
+  }
+
+  tr {
+    break-inside: avoid;
+  }
+
+  th {
+    background: none;
+    color: #000;
+    border-bottom: 1px solid #000;
+  }
+
+  td {
+    border-bottom: 1px solid #bbb;
+  }
+
+  /* Rules rather than fills, and no colour: a statement is read in black and
+     white, and "Outstanding" cannot depend on being red to be noticed. */
+  .owed,
+  .settled,
+  .tag {
+    color: #000;
+    border: none;
+    padding: 0;
+  }
+
+  .owed {
+    font-weight: 700;
+  }
+
+  tfoot td {
+    border-top: 1px solid #000;
+    border-bottom: none;
+  }
+
+  tfoot tr:last-child td {
+    border-top: 1px solid #000;
+    border-bottom: 3px double #000;
+    font-weight: 700;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}

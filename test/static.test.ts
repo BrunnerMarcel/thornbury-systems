@@ -70,7 +70,9 @@ test('mounting the UI leaves the API routes alone', async () => {
 
   assert.equal(response.status, 200);
   const body = await response.json() as { totals: { outstanding: number } };
-  assert.equal(body.totals.outstanding, 248400);
+  // C-1002 is a commercial account, so their water supply carries VAT too.
+  // See vatPercentFor in src/invoices/calc.ts.
+  assert.equal(body.totals.outstanding, 294000);
 });
 
 // The browser cannot import the TypeScript money helper, so public/money.js

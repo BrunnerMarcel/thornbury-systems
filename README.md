@@ -21,7 +21,7 @@ npm start       # API on http://localhost:4310, UI on http://localhost:4310/app/
 - `src/static.ts` serves `public/` under `/app`.
 - `public/` the browser front end. No build step, no framework, same origin as the
   API so there is nothing to configure. Every view is a `#fragment`.
-- `jobs/` the support queue. Four things waiting to be done.
+- `jobs/` the support queue. Empty when there is nothing outstanding.
 
 ## The front end
 
@@ -46,4 +46,4 @@ written down anywhere.
 Money is in pence. Dates are stored UTC and shown UK local. Those two rules are the
 only ones everybody agreed on.
 
-There is no CLAUDE.md and no contributor guide. That was on Priya's list.
+`CLAUDE.md` has the conventions and the things that are not settled.

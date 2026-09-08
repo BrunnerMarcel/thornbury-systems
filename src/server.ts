@@ -58,7 +58,7 @@ export const server = createServer(async (req, res) => {
     if (!customer) return json(res, 404, { error: 'no such customer' });
     return json(res, 200, {
       ...customer,
-      outstanding: format(outstandingFor(customer.id, invoices)),
+      outstanding: format(outstandingFor(customer, invoices)),
     });
   }
 
@@ -79,7 +79,10 @@ export const server = createServer(async (req, res) => {
   if (parts[0] === 'invoices' && parts.length === 2) {
     const invoice = invoices.find((i) => i.id === parts[1]);
     if (!invoice) return json(res, 404, { error: 'no such invoice' });
-    const totals = totalFor(invoice);
+    // VAT depends on the account, so an invoice cannot be totalled without it.
+    const customer = customers.find((c) => c.id === invoice.customerId);
+    if (!customer) return json(res, 409, { error: 'invoice has no customer', customerId: invoice.customerId });
+    const totals = totalFor(invoice, customer);
     return json(res, 200, { ...invoice, ...totals, display: format(totals.total) });
   }
 

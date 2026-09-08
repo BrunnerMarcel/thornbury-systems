@@ -33,16 +33,16 @@ test('customer statement combines invoices and account totals', async () => {
         issued: '2026-07-01',
         paid: false,
         net: 245000,
-        vat: 3400,
-        total: 248400,
+        vat: 49000,
+        total: 294000,
       },
     ],
     totals: {
       net: 245000,
-      vat: 3400,
-      invoiced: 248400,
+      vat: 49000,
+      invoiced: 294000,
       paid: 0,
-      outstanding: 248400,
+      outstanding: 294000,
     },
   });
 });

@@ -69,7 +69,8 @@ test('mounting the UI leaves the API routes alone', async () => {
   const response = await fetch(`${baseUrl}/customers/C-1002/statement`);
 
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).totals.outstanding, 248400);
+  const body = await response.json() as { totals: { outstanding: number } };
+  assert.equal(body.totals.outstanding, 248400);
 });
 
 // The browser cannot import the TypeScript money helper, so public/money.js

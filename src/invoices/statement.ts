@@ -23,16 +23,20 @@ export interface CustomerStatement {
   };
 }
 
+// Covers the whole account, not a period: `net` and `vat` below are
+// account-to-date and span paid and unpaid alike. Whether a statement should
+// instead cover a quarter, and whether it should carry an opening balance, is
+// not settled.
 export function statementFor(customer: Customer, allInvoices: Invoice[]): CustomerStatement {
   const statementInvoices = allInvoices
     .filter((invoice) => invoice.customerId === customer.id)
     .sort((a, b) => a.issued.localeCompare(b.issued) || a.id.localeCompare(b.id))
-    .map((invoice) => ({
-      id: invoice.id,
-      issued: invoice.issued,
-      paid: invoice.paid,
-      ...totalFor(invoice),
-    }));
+    .map((invoice) => {
+      // Picked apart rather than spread: InvoiceTotal also carries `vatable`,
+      // which is for Finance checking the VAT rule, not for the customer.
+      const { net, vat, total } = totalFor(invoice, customer);
+      return { id: invoice.id, issued: invoice.issued, paid: invoice.paid, net, vat, total };
+    });
 
   return {
     customer: {

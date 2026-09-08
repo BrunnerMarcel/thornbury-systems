@@ -9,6 +9,11 @@
   },
   "scripts": {
     "test": "node --experimental-strip-types --test \"test/**/*.test.ts\"",
-    "start": "node --experimental-strip-types src/server.ts"
+    "start": "node --experimental-strip-types src/server.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "^5.9.3"
   }
 }

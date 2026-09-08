@@ -4,3 +4,6 @@ node_modules/
 
 # tooling artefacts
 .claude/evidence/
+
+# per-machine, not shared. The rest of .claude/ is.
+.claude/settings.local.json

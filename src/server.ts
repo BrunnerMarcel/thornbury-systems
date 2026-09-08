@@ -5,6 +5,7 @@ import { statementFor } from './invoices/statement.ts';
 import { dispatch } from './scheduling/dispatch.ts';
 import { slotsFor } from './scheduling/slots.ts';
 import { format } from './shared/money.ts';
+import { serveAsset, UI_PREFIX } from './static.ts';
 
 const PORT = Number(process.env.PORT ?? 4310);
 
@@ -14,14 +15,27 @@ function json(res: import('node:http').ServerResponse, status: number, body: unk
   res.end(payload);
 }
 
-export const server = createServer((req, res) => {
+export const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://localhost:${PORT}`);
+
+  // The UI is a single page: every view is a #fragment, so one index.html and
+  // its two assets are the whole of it.
+  if (url.pathname === UI_PREFIX) {
+    res.writeHead(302, { location: `${UI_PREFIX}/` });
+    return res.end();
+  }
+  if (url.pathname.startsWith(`${UI_PREFIX}/`)) {
+    if (await serveAsset(url.pathname.slice(UI_PREFIX.length), res)) return;
+    return json(res, 404, { error: 'no such asset', path: url.pathname });
+  }
+
   const parts = url.pathname.split('/').filter(Boolean);
 
   if (parts.length === 0) {
     return json(res, 200, {
       service: 'Thornbury Systems billing and scheduling',
       version: '3.11.2',
+      ui: `${UI_PREFIX}/`,
       routes: [
         'GET /customers',
         'GET /customers/:id',
@@ -44,7 +58,7 @@ export const server = createServer((req, res) => {
     if (!customer) return json(res, 404, { error: 'no such customer' });
     return json(res, 200, {
       ...customer,
-      outstanding: format(outstandingFor(customer.id, invoices)),
+      outstanding: format(outstandingFor(customer, invoices)),
     });
   }
 
@@ -65,7 +79,10 @@ export const server = createServer((req, res) => {
   if (parts[0] === 'invoices' && parts.length === 2) {
     const invoice = invoices.find((i) => i.id === parts[1]);
     if (!invoice) return json(res, 404, { error: 'no such invoice' });
-    const totals = totalFor(invoice);
+    // VAT depends on the account, so an invoice cannot be totalled without it.
+    const customer = customers.find((c) => c.id === invoice.customerId);
+    if (!customer) return json(res, 409, { error: 'invoice has no customer', customerId: invoice.customerId });
+    const totals = totalFor(invoice, customer);
     return json(res, 200, { ...invoice, ...totals, display: format(totals.total) });
   }
 

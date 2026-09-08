@@ -1,0 +1,24 @@
+{
+  "// note": "Nothing is compiled. Node runs the TypeScript directly and --experimental-strip-types only removes the types, it never checks them. This config exists so `npm run typecheck` can, which is why noEmit is on and allowImportingTsExtensions is allowed: the .ts extensions in the imports are what Node needs at runtime.",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    "allowJs": true,
+    "checkJs": false,
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "test"]
+}

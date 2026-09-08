@@ -50,6 +50,19 @@ async function api(path) {
 
 /* ---------- shared cells ---------- */
 
+// A printed statement is something the customer reads, so its date follows the
+// same rule as every other date they see: UK local, not the host's zone.
+const UK_LONG_DATE = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+function ukLongDate(date) {
+  return UK_LONG_DATE.format(date);
+}
+
 function money(pence) {
   return html`<td class="num">${format(pence)}</td>`;
 }
@@ -137,8 +150,31 @@ async function showStatement(id) {
 
   return html`
     <p class="crumb"><a href="#/customers/${customer.id}">${customer.name}</a></p>
-    <h2>Statement</h2>
-    <p class="subtitle">${customer.name} &middot; ${customer.address}</p>
+
+    <!-- Print masthead. On screen the site header already says who we are, so
+         this is hidden; on paper it is the only thing that does. -->
+    <div class="print-only statement-head">
+      <div>
+        <p class="issuer">Thornbury Systems</p>
+        <p class="issuer-sub">Billing and scheduling</p>
+      </div>
+      <div class="statement-meta">
+        <p class="doc-title">Statement</p>
+        <p>Prepared ${ukLongDate(new Date())}</p>
+        <p>Account <span class="mono">${customer.id}</span></p>
+      </div>
+    </div>
+    <div class="print-only statement-to">
+      <p class="to-label">Statement for</p>
+      <p class="to-name">${customer.name}</p>
+      <p>${customer.address}</p>
+    </div>
+
+    <h2 class="screen-only">Statement</h2>
+    <p class="subtitle screen-only">${customer.name} &middot; ${customer.address}</p>
+    <p class="screen-only">
+      <button type="button" data-print>Print this statement</button>
+    </p>
 
     ${table(
       [
@@ -336,6 +372,12 @@ async function route() {
     view.innerHTML = render(html`<p class="error">${error.message}</p>`);
   }
 }
+
+// Delegated, because every view is re-rendered by replacing innerHTML and a
+// listener bound to the button itself would not survive that.
+view.addEventListener('click', (event) => {
+  if (event.target.closest('[data-print]')) print();
+});
 
 addEventListener('hashchange', route);
 route();

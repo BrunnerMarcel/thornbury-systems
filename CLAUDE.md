@@ -62,7 +62,7 @@ Imports carry the `.ts` extension because Node needs it at runtime. That is what
 ## The front end
 
 `public/` is a read-only view of the API and holds no business rules of its own.
-Two things to know:
+Three things to know:
 
 `public/money.js` repeats `format()` because the browser cannot import the
 TypeScript. `test/static.test.ts` fails if the two disagree.
@@ -71,6 +71,14 @@ Nothing tests that the UI renders every field the API returns, so **when you
 change a response shape, open `/app/` and look.** When `slotFor` grew `endDate`,
 the UI kept rendering one date and quietly threw the fix away. If you add a rule
 to the API, check whether a caption in `public/app.js` now describes it wrongly.
+
+**Paper is a second layout, and the screen rules leak into it.** `.scroll` keeps
+a wide table inside the viewport by clipping what overflows, and a clipping box
+clips at the edge of the paper too: printed, the table silently loses its
+right-hand columns unless print overrides it to `overflow: visible`. So anything
+touching table or layout CSS wants a look in print preview, not only on screen.
+The statement is where this matters — it goes to a customer's accounts
+department, which is the whole reason the page exists.
 
 ## Not settled
 

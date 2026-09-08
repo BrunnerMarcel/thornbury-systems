@@ -10,6 +10,10 @@ from "make it nicer".
 statement, work orders, dispatch, appointment windows. No framework, no build
 step, same origin. It holds no business rules of its own.
 
+The statement also prints: `@media print` gives an A4 page a customer's accounts
+department can be sent. Every other view prints legibly but is not designed for
+paper.
+
 ## The constraints anything here has to live inside
 
 **No build step.** `npm test` and `npm start` work on a clean checkout with no

@@ -31,6 +31,10 @@ own — the one exception is `public/money.js`, which repeats `format()` from
 `src/shared/money.ts` because the browser cannot import the TypeScript. There is
 a test that fails if the two ever disagree.
 
+The statement prints. There is a button on the page, and `@media print` turns it
+into an A4 document that can go to a customer's accounts department, which is
+what it was asked for in the first place.
+
 The API routes are unchanged and `/` still answers with the route list, so
 anything already pointed at this service keeps working.
 
